@@ -3,7 +3,7 @@ import API_BASE_URL from "./auth.config";
 
 const register_req = async (username, email, password) => {
   return await axios.post(API_BASE_URL + '/auth/signup', {
-      userName: username, 
+      username: username, 
       email: email, 
       password: password
   })
@@ -15,7 +15,6 @@ const login_req = async (email, password) => {
   if (response.data.token) {
       console.log(response.data)
       localStorage.setItem("user", JSON.stringify(response.data));
-      window.location.reload()
   }
 
   return response;

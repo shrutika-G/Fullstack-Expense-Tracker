@@ -7,35 +7,52 @@ import Container from "../../components/utils/Container";
 import toast, { Toaster } from "react-hot-toast";
 
 function UserStatistics() {
-    const months = getMonths()
-    const [data, isLoading, isError] = useExpenseVsIncomeSummary(months)
+    const months = getMonths();
+    const [data, isLoading, isError] = useExpenseVsIncomeSummary(months);
+
+    const percentageData = data?.map((item) => {
+        const income = item.income || 0;
+        const expense = item.expense || 0;
+        const total = income + expense;
+
+        return {
+            ...item,
+            income: total === 0 ? 0 : Number(((income / total) * 100).toFixed(2)),
+            expense: total === 0 ? 0 : Number(((expense / total) * 100).toFixed(2))
+        };
+    });
 
     return (
         <Container activeNavId={9}>
             <Header title="Statistics" />
-            <Toaster/>
-            {(isLoading) && <Loading />}
-            {(isError) && toast.error("Failed to fetch information. Try again later!") }
-            {(isError) && <Info text="No data found!" />}
-            {(!isError) && <IncomeVsExpenseChart data={data} />}
+            <Toaster />
+
+            {isLoading && <Loading />}
+
+            {isError && toast.error("Failed to fetch information. Try again later!")}
+
+            {isError && <Info text="No data found!" />}
+
+            {!isLoading && !isError && <IncomeVsExpenseChart data={percentageData} />}
         </Container>
-    )
+    );
 }
 
 export default UserStatistics;
 
 function getMonths() {
-    const months = []
-    const current_date = new Date()
+    const months = [];
+    const current_date = new Date();
 
     for (let i = 11; i >= 0; i--) {
-        const date = new Date(current_date.getFullYear(), current_date.getMonth() - i, 1)
+        const date = new Date(current_date.getFullYear(), current_date.getMonth() - i, 1);
+
         months.push({
             id: date.getMonth() + 1,
             year: date.getFullYear(),
             monthName: date.toLocaleString('en-US', { month: 'long' })
-        })
+        });
     }
 
-    return months
+    return months;
 }

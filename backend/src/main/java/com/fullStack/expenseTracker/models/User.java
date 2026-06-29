@@ -14,7 +14,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "users",
@@ -22,8 +21,8 @@ import lombok.NoArgsConstructor;
                 @UniqueConstraint(columnNames = "username"),
                 @UniqueConstraint(columnNames = "email")
         })
-@Builder
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -49,13 +48,17 @@ public class User {
     private String profileImgUrl;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(  name = "user_roles",
+    @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
 
-    public User(String username, String email, String password, String verificationCode, Date verificationCodeExpiryTime, boolean enabled, Set<Role> roles) {
+    // ✅ IMPORTANT CONSTRUCTOR
+    public User(String username, String email, String password,
+                String verificationCode, Date verificationCodeExpiryTime,
+                boolean enabled, Set<Role> roles) {
+
         this.username = username;
         this.email = email;
         this.password = password;
@@ -64,5 +67,4 @@ public class User {
         this.enabled = enabled;
         this.roles = roles;
     }
-
 }
